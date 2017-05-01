@@ -6,4 +6,4 @@ docker run -d -v /var/run/docker.sock:/tmp/docker.sock --link consul:consul --na
 
 #docker run -d -p 444:44444 -p 2122:2122 -p 50070:50070 -p 54310:54310 --dns 172.17.0.2 --dns 8.8.8.8 --dns-search service.consul -e "SERVICE_2122_NAME=node01" -e "SERVICE_2122_ID=node01.2122" --name hadoop -h node01 sumit/hadoop:latest /etc/bootstrap.sh -d master 
 
-docker run -d -p 444:44444 -p 2122:2122 -p 50070:50070 -p 54310:54310 --dns 172.17.0.2 --dns 8.8.8.8 --dns-search service.consul -e "SERVICE_2122_NAME=node01" -e "SERVICE_2122_ID=node01.2122" --name hive -h node01 sumit/hive:latest /etc/bootstrap.sh -d master
+docker run -d -p 10000:10000 -p 50075:50075 -p 50010:50010 -p 444:44444 -p 2122:2122 -p 50070:50070 -p 54310:54310 --dns 172.17.0.2 --dns 8.8.8.8 --dns-search service.consul -e "SERVICE_2122_NAME=node01" -e "SERVICE_2122_ID=node01.2122" --name hive -h node01 sumit/hive:latest /etc/bootstrap.sh -d master

@@ -46,7 +46,9 @@ COPY derby.jar /usr/local/hive/lib/derby.jar
 
 RUN chown -R hduser:hadoop /usr/local/hive
 
-
+RUN echo 'cd /home/hduser' >> /home/hduser/.bashrc
+RUN echo 'echo "1. Run => schematool -dbType derby -initSchema"' >> /home/hduser/.bashrc
+RUN echo 'echo "2. Run => hive --service hiveserver2 --hiveconf hive.server2.thrift.port=10000 --hiveconf hive.root.logger=INFO,console"' >> /home/hduser/.bashrc
 
 ADD bootstrap.sh /etc/bootstrap.sh
 RUN chown hduser:hadoop /etc/bootstrap.sh
@@ -55,7 +57,11 @@ RUN chmod 700 /etc/bootstrap.sh
 ENV BOOTSTRAP /etc/bootstrap.sh
 RUN su - hduser -c "echo 'export BOOTSTRAP=/etc/bootstrap.sh' >> /home/hduser/.bashrc"
 
-RUN apt-get update & apt-get install -y net-tools
+RUN adduser --ingroup hadoop admin
+RUN adduser admin sudo
 
+
+RUN apt-get update & apt-get install -y net-tools
+EXPOSE 10000 10001
 CMD /usr/sbin/sshd -D
 

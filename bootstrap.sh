@@ -21,12 +21,11 @@ fi
 if [[ $2 == "slave" ]]; then
 su - hduser -c "$HADOOP_INSTALL/sbin/hadoop-daemon.sh start datanode"
 su - hduser -c "$HADOOP_INSTALL/sbin/yarn-daemons.sh --config /usr/local/hadoop/etc/hadoop  start nodemanager"
-#su - hduser -c "$HADOOP_INSTALL/bin/hdfs dfs -mkdir /user"
-#su - hduser -c "$HADOOP_INSTALL/bin/hdfs dfs -mkdir /user/hive"
-#su - hduser -c "$HADOOP_INSTALL/bin/hdfs dfs -mkdir /user/hive/warehouse"
-#su - hduser -c "$HADOOP_INSTALL/bin/hdfs dfs -mkdir /tmp"
-#su - hduser -c "$HADOOP_INSTALL/bin/hdfs dfs -chmod g+w /tmp"
-#su - hduser -c "$HADOOP_INSTALL/bin/hdfs dfs -chmod g+w /user/hive/warehouse"
+
+su - hduser -c "$HADOOP_INSTALL/bin/hdfs dfs -mkdir -p /user/hive/warehouse"
+su - hduser -c "$HADOOP_INSTALL/bin/hdfs dfs -mkdir /tmp"
+su - hduser -c "$HADOOP_INSTALL/bin/hdfs dfs -chmod g+w /tmp"
+su - hduser -c "$HADOOP_INSTALL/bin/hdfs dfs -chmod g+w /user/hive/warehouse"
 #su - hduser -c "/usr/local/hive/bin/schematool -dbType derby -initSchema"
 fi
 
