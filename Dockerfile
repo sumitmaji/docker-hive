@@ -48,6 +48,7 @@ RUN chown -R hduser:hadoop /usr/local/hive
 
 RUN echo 'cd /home/hduser' >> /home/hduser/.bashrc
 RUN echo 'echo "1. Run => schematool -dbType derby -initSchema"' >> /home/hduser/.bashrc
+RUN echo 'echo "2. Run => hive =>Standalone Mode => Cntl+C to quit"' >> /home/hduser/.bashrc
 RUN echo 'echo "2. Run => hive --service hiveserver2 --hiveconf hive.server2.thrift.port=10000 --hiveconf hive.root.logger=INFO,console"' >> /home/hduser/.bashrc
 
 ADD bootstrap.sh /etc/bootstrap.sh
