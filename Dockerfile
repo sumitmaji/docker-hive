@@ -1,5 +1,8 @@
-FROM sumit/hadoop:latest
+FROM master.cloud.com:5000/hadoop
 MAINTAINER Sumit Kumar Maji
+
+WORKDIR /usr/local/
+ARG REPOSITORY_HOST
 
 ADD . /container/
 

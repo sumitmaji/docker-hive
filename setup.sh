@@ -1,8 +1,9 @@
 #!/bin/bash
 
-tar -xzvf /container/apache-hive-2.1.0-bin.tar.gz -C /usr/local/
+wget "$REPOSITORY_HOST"/repo/apache-hive-2.1.0-bin.tar.gz
+tar -xzvf apache-hive-2.1.0-bin.tar.gz
 mv /usr/local/apache-hive-2.1.0-bin /usr/local/hive/
-rm -rf /container/apache-hive-2.1.0-bin.tar.gz
+rm -rf /usr/local/apache-hive-2.1.0-bin.tar.gz
 chown -R hduser:hadoop /usr/local/hive
 
 export HIVE_HOME="/usr/local/hive"
@@ -22,9 +23,10 @@ su - hduser -c "cp /usr/local/hive/conf/hive-env.sh.template /usr/local/hive/con
 su - hduser -c "echo 'export HADOOP_HOME=/usr/local/hadoop' >> /usr/local/hive/conf/hive-env.sh"
 
 #Install Derby
-tar -xzvf /container/db-derby-10.13.1.1-bin.tar.gz -C /usr/local/
+wget "$REPOSITORY_HOST"/repo/db-derby-10.13.1.1-bin.tar.gz
+tar -xzvf db-derby-10.13.1.1-bin.tar.gz
 mv /usr/local/db-derby-10.13.1.1-bin /usr/local/derby
-rm -rf /container/db-derby-10.13.1.1-bin.tar.gz
+rm -rf /usr/local/db-derby-10.13.1.1-bin.tar.gz
 chown -R hduser:hadoop /usr/local/derby
 
 #Derby Environemtn Setup
@@ -36,11 +38,14 @@ echo 'export DERBY_INSTALL=/usr/local/derby' >> /home/hduser/.bashrc
 echo 'export CLASSPATH=$DERBY_INSTALL/lib/derby.jar:$DERBY_INSTALL/lib/derbytools.jar:.' >> /home/hduser/.bashrc
 echo 'export PATH=$PATH:$DERBY_INSTALL/bin' >> /home/hduser/.bashrc
 
+wget "$REPOSITORY_HOST"/repo/derby.jar
+wget "$REPOSITORY_HOST"/repo/derbyclient.jar
+
+mv derbyclient.jar /usr/local/hive/lib/derbyclient.jar
+mv derby.jar /usr/local/hive/lib/derby.jar
 
 cp /container/hive-site.xml /usr/local/hive/conf/hive-site.xml
 cp /container/jpox.properties /usr/local/hive/conf/jpox.properties
-cp /container/derbyclient.jar  /usr/local/hive/lib/derbyclient.jar
-cp /container/derby.jar /usr/local/hive/lib/derby.jar
 
 chown -R hduser:hadoop /usr/local/hive
 
