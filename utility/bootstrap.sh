@@ -25,7 +25,7 @@ setEnvVariable() {
  export PATH="$PATH:$DERBY_INSTALL/bin"
 
  fqdn=$(hostname -f)
- mkdir /hive
+ #mkdir /hive
  echo 'export HIVE_HOME=/usr/local/hive' >> /etc/bash.bashrc
  echo 'export HIVE_CONF_DIR=/usr/local/hive/conf' >> /etc/bash.bashrc
  echo 'export PATH=$HIVE_HOME/bin:$PATH' >> /etc/bash.bashrc
@@ -35,7 +35,9 @@ setEnvVariable() {
  echo 'export CLASSPATH=$DERBY_INSTALL/lib/derby.jar:$DERBY_INSTALL/lib/derbytools.jar:.' >> /etc/bash.bashrc
  echo 'export PATH=$PATH:$DERBY_INSTALL/bin' >> /etc/bash.bashrc
 
- echo 'cd /hive' >> /etc/bash.bashrc
+ echo 'mkdir -p $HOME/hive' >> /etc/bash.bashrc
+ echo 'chmod 700 $HOME/hive' >> /etc/bash.bashrc
+ echo 'cd $HOME/hive' >> /etc/bash.bashrc >> /etc/bash.bashrc
  echo 'echo "1. Run => schematool -dbType derby -initSchema"' >> /etc/bash.bashrc
  echo 'echo "2. Run => hive =>Standalone Mode => Cntl+C to quit"' >> /etc/bash.bashrc
  echo 'echo "2. Run => hive --service hiveserver2 --hiveconf hive.server2.thrift.port=10000 --hiveconf hive.root.logger=INFO,console"' >> /etc/bash.bashrc
