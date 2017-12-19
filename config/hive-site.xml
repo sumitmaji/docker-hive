@@ -329,7 +329,7 @@
   </property>
   <property>
     <name>hive.metastore.uris</name>
-    <value/>
+    <value />
     <description>Thrift URI for the remote metastore. Used by metastore client to connect to remote metastore.</description>
   </property>
   <property>
@@ -571,12 +571,12 @@
   </property>
   <property>
     <name>hive.metastore.kerberos.keytab.file</name>
-    <value/>
+    <value>/etc/security/keytabs/hive.keytab</value>
     <description>The path to the Kerberos Keytab file containing the metastore Thrift server's service principal.</description>
   </property>
   <property>
     <name>hive.metastore.kerberos.principal</name>
-    <value>hive-metastore/_HOST@EXAMPLE.COM</value>
+    <value>hive/_HOST@CLOUD.COM</value>
     <description>
       The service principal for the metastore Thrift server. 
       The special string _HOST will be replaced automatically with the correct host name.
@@ -584,7 +584,7 @@
   </property>
   <property>
     <name>hive.metastore.sasl.enabled</name>
-    <value>false</value>
+    <value>true</value>
     <description>If true, the metastore Thrift interface will be secured with SASL. Clients must authenticate with Kerberos.</description>
   </property>
   <property>

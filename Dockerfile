@@ -4,16 +4,21 @@ MAINTAINER Sumit Kumar Maji
 WORKDIR /usr/local/
 ARG REPOSITORY_HOST
 
-RUN wget "$REPOSITORY_HOST"/repo/apache-hive-2.1.0-bin.tar.gz &&\
-tar -xzvf apache-hive-2.1.0-bin.tar.gz &&\
-mv /usr/local/apache-hive-2.1.0-bin /usr/local/hive/ &&\
-rm -rf /usr/local/apache-hive-2.1.0-bin.tar.gz &&\
+RUN wget "$REPOSITORY_HOST"/repo/apache-hive-2.3.2-bin.tar.gz &&\
+tar -xzvf apache-hive-2.3.2-bin.tar.gz &&\
+mv /usr/local/apache-hive-2.3.2-bin /usr/local/hive/ &&\
+rm -rf /usr/local/apache-hive-2.3.2-bin.tar.gz &&\
 chown -R root:hadoop /usr/local/hive &&\
 wget "$REPOSITORY_HOST"/repo/db-derby-10.13.1.1-bin.tar.gz &&\
 tar -xzvf db-derby-10.13.1.1-bin.tar.gz &&\
 mv /usr/local/db-derby-10.13.1.1-bin /usr/local/derby &&\
 rm -rf /usr/local/db-derby-10.13.1.1-bin.tar.gz &&\
-chown -R root:hadoop /usr/local/derby
+chown -R root:hadoop /usr/local/derby &&\
+wget "$REPOSITORY_HOST"/repo/spark-jar.tar.gz &&\
+tar -xzvf /usr/local/spark-jar.tar.gz &&\
+ln -s /usr/local/spark-jar/spark-network-common_2.11-2.2.0.jar /usr/local/hive/lib/spark-network-common_2.11-2.2.0.jar &&\
+ln -s /usr/local/spark-jar/spark-core_2.11-2.2.0.jar /usr/local/hive/lib/spark-core_2.11-2.2.0.jar &&\
+ln -s /usr/local/spark-jar/scala-library-2.11.8.jar /usr/local/hive/lib/scala-library-2.11.8.jar
 
 RUN cp /usr/local/hive/conf/hive-env.sh.template /usr/local/hive/conf/hive-env.sh
 RUN echo 'export HADOOP_HOME=/usr/local/hadoop' >> /usr/local/hive/conf/hive-env.sh
@@ -42,6 +47,6 @@ COPY utility/bootstrap.sh /utility/hive/bootstrap.sh
 RUN chown root:root /utility/hive/bootstrap.sh
 RUN chmod +x /utility/hive//bootstrap.sh
 
-EXPOSE 10000 10001
+EXPOSE 10000 10001 10002
 #CMD /usr/sbin/sshd -D
 ENTRYPOINT ["/utility/hive/bootstrap.sh"]
