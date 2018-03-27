@@ -571,12 +571,12 @@
   </property>
   <property>
     <name>hive.metastore.kerberos.keytab.file</name>
-    <value>/etc/security/keytabs/hive.keytab</value>
+    $HIVE_KEYTAB
     <description>The path to the Kerberos Keytab file containing the metastore Thrift server's service principal.</description>
   </property>
   <property>
     <name>hive.metastore.kerberos.principal</name>
-    <value>hive/_HOST@CLOUD.COM</value>
+    $HIVE_PRINCIPAL
     <description>
       The service principal for the metastore Thrift server. 
       The special string _HOST will be replaced automatically with the correct host name.
@@ -584,7 +584,7 @@
   </property>
   <property>
     <name>hive.metastore.sasl.enabled</name>
-    <value>true</value>
+    $ENABLE_SASL 
     <description>If true, the metastore Thrift interface will be secured with SASL. Clients must authenticate with Kerberos.</description>
   </property>
   <property>
@@ -3839,7 +3839,7 @@
   </property>
   <property>
     <name>hive.server2.authentication</name>
-    <value>KERBEROS</value>
+    $AUTHENTICATION_TYPE 
     <description>
       Expects one of [nosasl, none, ldap, kerberos, pam, custom].
       Client authentication types.
@@ -3859,12 +3859,12 @@
   </property>
   <property>
     <name>hive.server2.authentication.kerberos.keytab</name>
-    <value>/etc/security/keytabs/hive.keytab</value>
+    $HIVE_KEYTAB 
     <description>Kerberos keytab file for server principal</description>
   </property>
   <property>
     <name>hive.server2.authentication.kerberos.principal</name>
-    <value>hive/_HOST@CLOUD.COM</value>
+    $HIVE_PRINCIPAL
     <description>Kerberos server principal</description>
   </property>
   <property>

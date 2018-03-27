@@ -4,17 +4,17 @@ MAINTAINER Sumit Kumar Maji
 WORKDIR /usr/local/
 ARG REPOSITORY_HOST
 
-RUN wget "$REPOSITORY_HOST"/repo/apache-hive-2.3.2-bin.tar.gz &&\
+RUN wget "$REPOSITORY_HOST"/apache-hive-2.3.2-bin.tar.gz &&\
 tar -xzvf apache-hive-2.3.2-bin.tar.gz &&\
 mv /usr/local/apache-hive-2.3.2-bin /usr/local/hive/ &&\
 rm -rf /usr/local/apache-hive-2.3.2-bin.tar.gz &&\
 chown -R root:hadoop /usr/local/hive &&\
-wget "$REPOSITORY_HOST"/repo/db-derby-10.13.1.1-bin.tar.gz &&\
+wget "$REPOSITORY_HOST"/db-derby-10.13.1.1-bin.tar.gz &&\
 tar -xzvf db-derby-10.13.1.1-bin.tar.gz &&\
 mv /usr/local/db-derby-10.13.1.1-bin /usr/local/derby &&\
 rm -rf /usr/local/db-derby-10.13.1.1-bin.tar.gz &&\
 chown -R root:hadoop /usr/local/derby &&\
-wget "$REPOSITORY_HOST"/repo/spark-jar.tar.gz &&\
+wget "$REPOSITORY_HOST"/spark-jar.tar.gz &&\
 tar -xzvf /usr/local/spark-jar.tar.gz &&\
 ln -s /usr/local/spark-jar/spark-network-common_2.11-2.2.0.jar /usr/local/hive/lib/spark-network-common_2.11-2.2.0.jar &&\
 ln -s /usr/local/spark-jar/spark-core_2.11-2.2.0.jar /usr/local/hive/lib/spark-core_2.11-2.2.0.jar &&\
@@ -34,8 +34,8 @@ ENV DERBY_INSTALL /usr/local/derby
 ENV CLASSPATH $DERBY_INSTALL/lib/derby.jar:$DERBY_INSTALL/lib/derbytools.jar:.
 ENV PATH $PATH:$DERBY_INSTALL/bin
 
-RUN wget "$REPOSITORY_HOST"/repo/derby.jar
-RUN wget "$REPOSITORY_HOST"/repo/derbyclient.jar
+RUN wget "$REPOSITORY_HOST"/derby.jar
+RUN wget "$REPOSITORY_HOST"/derbyclient.jar
 
 RUN mv derbyclient.jar /usr/local/hive/lib/derbyclient.jar
 RUN mv derby.jar /usr/local/hive/lib/derby.jar
@@ -46,7 +46,9 @@ RUN mkdir -p /utility/hive/
 COPY utility/bootstrap.sh /utility/hive/bootstrap.sh
 RUN chown root:root /utility/hive/bootstrap.sh
 RUN chmod +x /utility/hive//bootstrap.sh
+RUN mkdir -p /configg/hive
+ADD config/config /configg/hive/config
 
 EXPOSE 10000 10001 10002
 #CMD /usr/sbin/sshd -D
-ENTRYPOINT ["/utility/hive/bootstrap.sh"]
+#ENTRYPOINT ["/utility/hive/bootstrap.sh"]

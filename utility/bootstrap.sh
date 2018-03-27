@@ -2,12 +2,25 @@
 
 [[ "TRACE" ]] && set -x
 
-: ${HDFS:=hdfs-master}
-: ${HIVE:=hive}
-: ${SPARK:=spark}
-: ${OOZIE:=oozie}
+if [ $ENABLE_KUBERNETES == 'false' -o $ENABLE_KUBERNETES == '' ]
+then
+ source /configg/hive/config
+fi
 
- ip_addr=`/sbin/ifconfig eth1 | grep 'inet addr' | cut -d: -f2 | awk '{print $1}'`
+: ${ENABLE_HIVE_SSL:=false}
+: ${HADOOP_INSTALL:=/usr/local/hadoop}
+: ${MASTER:=hdfs-master}
+: ${DOMAIN_NAME:=cloud.com}
+: ${DOMAIN_REALM:=$DOMAIN_NAME}
+#: ${HDFS:=hdfs-master.cloud.com}
+: ${KEY_PWD:=sumit@1234}
+: ${ENABLE_HADOOP_SSL:=false}
+: ${ENABLE_KERBEROS:=false}
+: ${ENABLE_KUBERNETES:=false}
+#: ${NAME_SERVER:=hdfs-master.cloud.com}
+: ${HDFS_MASTER:=$MASTER.$DOMAIN_NAME}
+: ${REALM:=$(echo $DOMAIN_NAME | tr 'a-z' 'A-Z')}
+: ${HADOOP_OPTION:=-s}
 
 startSsh() {
  echo -e "Starting SSHD service"
@@ -48,9 +61,9 @@ changeOwner() {
 }
 
 initializePrincipal() {
- kadmin -p root/admin -w admin -q "addprinc -randkey hive/$(hostname -f)@CLOUD.COM"
+ kadmin -p root/admin -w admin -q "addprinc -randkey hive/$(hostname -f)@$REALM"
  
- kadmin -p root/admin -w admin -q "xst -k hive.keytab hive/$(hostname -f)@CLOUD.COM"
+ kadmin -p root/admin -w admin -q "xst -k hive.keytab hive/$(hostname -f)@$REALM"
 
  mkdir -p /etc/security/keytabs
  mv hive.keytab /etc/security/keytabs
@@ -58,6 +71,26 @@ initializePrincipal() {
  chown root:hadoop /etc/security/keytabs/hive.keytab
 }
 
+setupKerberosSsl(){
+  fqdn=$(hostname -f)
+  if [ $ENABLE_KERBEROS == 'true' ]
+  then
+    sed -i "s/\$HIVE_KEYTAB/<value>\/etc\/security\/keytabs\/hive.keytab<\/value>/g" /usr/local/hive/conf/hive-site.xml
+    sed -i "s/\$HIVE_PRINCIPAL/<value>hive\/$fqdn@$REALM<\/value>/g" /usr/local/hive/conf/hive-site.xml
+    sed -i "s/\$AUTHENTICATION_TYPE/<value>KERBEROS<\/value>/g" /usr/local/hive/conf/hive-site.xml
+  else
+    sed -i "s/\$HIVE_KEYTAB/<value\/>/g" /usr/local/hive/conf/hive-site.xml
+    sed -i "s/\$HIVE_PRINCIPAL/<value>hive-metastore\/_HOST@EXAMPLE.COM<\/value>/g" /usr/local/hive/conf/hive-site.xml
+    sed -i "s/\$AUTHENTICATION_TYPE/<value>NONE<\/value>/g" /usr/local/hive/conf/hive-site.xml
+  fi
+
+  if [ $ENABLE_HIVE_SSL == 'true' ]
+  then
+   sed -i "s/\$ENABLE_SASL/<value>true<\/value>/g" /usr/local/hive/conf/hive-site.xml
+  else
+   sed -i "s/\$ENABLE_SASL/<value>false<\/value>/g" /usr/local/hive/conf/hive-site.xml
+  fi
+}
 
 startHive() {
  su - root -c "/usr/local/hive/bin/schematool -dbType derby -initSchema"
@@ -80,15 +113,34 @@ initialize() {
  startHive
 }
 
-main() {
- if [ ! -f /hue_initialized ]; then
-    /utility/ldap/bootstrap.sh
-    startSsh
-    initializePrincipal
+#/utility/hadoop/bootstrap.sh -s master : setup hadoop as master
+#/utility/hadoop/bootstrap.sh -s slave: setup hadoop as slave
+#/utility/hadoop/bootstrap.sh -a master: start hadoop as master
+#/utility/hadoop/bootstrap.sh -a slave: start hadoop as slave
+
+setupHive(){
+    /utility/hadoop/bootstrap.sh $HADOOP_OPTION $1
+    if [ "$ENABLE_KERBEROS" == 'true' ]
+    then
+      initializePrincipal
+    fi
     #changeOwner
     setEnvVariable
+}
+
+main() {
+
+ if [ $1 == '-s' -a ! -f /hive_installed ]
+ then
+    setupHive $2
+    touch /hive_installed
+    exit 0
+ fi
+ if [ ! -f /hive_initialized ]; then
+    setupHive $2
+    startSsh
     initialize
-    touch /hue_initialized
+    touch /hive_initialized
   else
     startSsh
     initialize

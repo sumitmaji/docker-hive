@@ -1,2 +1,4 @@
 #!/bin/bash
-docker build --build-arg REPOSITORY_HOST=http://master:8181 -t sumit/hive:latest .
+
+source config/config
+docker build --build-arg REPOSITORY_HOST=$REPOSITORY_HOST -t sumit/hive:latest .
